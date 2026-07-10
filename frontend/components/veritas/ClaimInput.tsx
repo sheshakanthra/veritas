@@ -74,6 +74,11 @@ export function ClaimInput() {
       router.push(`/analyze/${analysisId}`);
     } catch (err) {
       setIsSubmitting(false);
+      if (err instanceof ApiError && err.status === 401) {
+        // Expired token that slipped past the middleware's presence check.
+        router.push("/login");
+        return;
+      }
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
@@ -114,9 +119,17 @@ export function ClaimInput() {
           <button
             type="button"
             onClick={() => setText(EXAMPLE_CLAIM)}
-            className="border-line text-mute hover:border-signal hover:text-text rounded-data border px-2.5 py-1 font-mono text-xs transition-colors duration-hover"
+            title={EXAMPLE_CLAIM}
+            className={cn(
+              "border-line text-mute hover:border-signal hover:text-text inline-flex max-w-[22rem]",
+              "items-center gap-1.5 rounded-data border bg-panel-raised px-2.5 py-1",
+              "font-mono text-xs transition-colors duration-hover"
+            )}
           >
-            {EXAMPLE_CLAIM}
+            <span aria-hidden className="text-signal shrink-0">
+              ✦
+            </span>
+            <span className="truncate">{EXAMPLE_CLAIM}</span>
           </button>
 
           <Button

@@ -6,6 +6,8 @@ import httpx
 import pytest
 from httpx import ASGITransport
 
+from app.api.deps import get_user_repository
+from app.db.repositories import InMemoryUserRepository
 from app.main import create_app
 
 SUBSTANTIAL_CLAIM = (
@@ -17,9 +19,17 @@ SUBSTANTIAL_CLAIM = (
 @pytest.fixture
 async def client():
     app = create_app()
+    repo = InMemoryUserRepository()
+    app.dependency_overrides[get_user_repository] = lambda: repo
     async with app.router.lifespan_context(app):
         transport = ASGITransport(app=app)
         async with httpx.AsyncClient(transport=transport, base_url="http://test") as c:
+            # The analyze endpoints require auth; the cookie jar carries the
+            # session cookie into every request below.
+            await c.post(
+                "/api/v1/auth/signup",
+                json={"email": "tester@example.com", "password": "password123"},
+            )
             yield c
 
 

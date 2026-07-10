@@ -56,6 +56,14 @@ class Settings(BaseSettings):
     # Cache
     prompt_version: str = Field(default="v1", alias="PROMPT_VERSION")
 
+    # Auth
+    # >= 32 bytes so HS256 doesn't warn (RFC 7518); still a dev-only default.
+    auth_secret_key: str = Field(
+        default="dev-secret-change-me-before-any-deploy", alias="AUTH_SECRET_KEY"
+    )
+    auth_token_ttl_seconds: int = Field(default=604_800, alias="AUTH_TOKEN_TTL_SECONDS")
+    auth_cookie_secure: bool = Field(default=False, alias="AUTH_COOKIE_SECURE")
+
     # App
     app_env: str = Field(default="development", alias="APP_ENV")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")

@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.v1 import analyze, corpus, health
+from app.api.v1 import analyze, auth, corpus, health
 from app.config import get_settings
 from app.db.repositories import InMemoryAnalysisRepository
 from app.graph.build import build_graph
@@ -56,6 +56,7 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(analyze.router)
+    app.include_router(auth.router)
     app.include_router(corpus.router)
     app.include_router(health.router)
 

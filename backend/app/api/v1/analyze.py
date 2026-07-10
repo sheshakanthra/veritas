@@ -3,23 +3,33 @@ from __future__ import annotations
 import json
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sse_starlette.sse import EventSourceResponse
 
+from app.api.deps import get_current_user
+from app.schemas.auth import AuthenticatedUser
 from app.schemas.result import AnalyzeAcceptedResponse, AnalyzeRequest, AnalysisResult
 
 router = APIRouter(prefix="/api/v1/analyze", tags=["analyze"])
 
 
 @router.post("", status_code=202, response_model=AnalyzeAcceptedResponse)
-async def submit_analysis(payload: AnalyzeRequest, request: Request) -> AnalyzeAcceptedResponse:
+async def submit_analysis(
+    payload: AnalyzeRequest,
+    request: Request,
+    _user: AuthenticatedUser = Depends(get_current_user),
+) -> AnalyzeAcceptedResponse:
     orchestrator = request.app.state.orchestrator
     analysis_id, _cache_hit = await orchestrator.submit(payload.text)
     return AnalyzeAcceptedResponse(analysis_id=analysis_id)
 
 
 @router.get("/{analysis_id}/stream")
-async def stream_analysis(analysis_id: UUID, request: Request) -> EventSourceResponse:
+async def stream_analysis(
+    analysis_id: UUID,
+    request: Request,
+    _user: AuthenticatedUser = Depends(get_current_user),
+) -> EventSourceResponse:
     orchestrator = request.app.state.orchestrator
 
     async def event_generator():
@@ -30,7 +40,11 @@ async def stream_analysis(analysis_id: UUID, request: Request) -> EventSourceRes
 
 
 @router.get("/{analysis_id}", response_model=AnalysisResult)
-async def get_analysis(analysis_id: UUID, request: Request) -> AnalysisResult:
+async def get_analysis(
+    analysis_id: UUID,
+    request: Request,
+    _user: AuthenticatedUser = Depends(get_current_user),
+) -> AnalysisResult:
     orchestrator = request.app.state.orchestrator
     result = await orchestrator.get_result(analysis_id)
     if result is None:

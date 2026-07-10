@@ -23,6 +23,8 @@ npm run dev
 
 Open `http://localhost:3000`. Everything - claim decomposition, retrieval, stance classification, adjudication, synthesis - runs against deterministic mock providers. Same input, same output, every time, with zero network calls.
 
+**Auth requires Postgres**: submitting a claim needs a logged-in account, and accounts live in the `users` table. Before first use, run `docker compose up -d` (from the repo root) and apply migrations with `cd backend && alembic upgrade head`. Everything else in the quickstart still works offline; only signup/login touches the database.
+
 To run against real Groq + Postgres + pgvector, copy `.env.example` to `.env`, set `MOCK_MODE=false` and `GROQ_API_KEY`, then `docker compose up -d` before starting the backend.
 
 ## Architecture
@@ -146,7 +148,7 @@ cd frontend && npm test
 - **The stance classifier's anti-hallucination gate only proves the span is verbatim, not that the model's stance label is correct.** A model can quote a real sentence and still misjudge whether it supports or refutes the claim; the gate prevents fabricated evidence, not misclassification.
 - **The calibration fixture set (40 examples) is synthetic**, hand-authored to be plausible, not drawn from real-world labelled claims. `expected_calibration_error` on `/health/calibration` reflects calibration against synthetic data, not a validated real-world guarantee.
 - **The mock providers are heuristic stand-ins, not model simulators.** `MockLLMProvider`'s stance classification is lexical token-overlap plus a negation-word list; it exercises every contract (schemas, the anti-hallucination gate, determinism) faithfully, but its actual judgment quality has nothing to do with the real Groq model's.
-- **No auth, no rate limiting, no multi-tenant isolation.** The in-memory `InMemoryAnalysisRepository` used by default is a single process-wide dict - fine for a demo, not for concurrent untrusted users.
+- **Auth is demo-grade: no rate limiting, no multi-tenant isolation, stateless logout.** Email+password accounts (bcrypt, JWT in an httpOnly cookie) gate the analyze endpoints, but logout only deletes the cookie - a copied token stays valid until expiry, and rotating `AUTH_SECRET_KEY` invalidates every session. The in-memory `InMemoryAnalysisRepository` used by default is a single process-wide dict - fine for a demo, not for concurrent untrusted users.
 - **Source tiering is a static ~30-domain allowlist** (`config_data/source_tiers.yaml`), not a reputation model - anything unlisted defaults to tier 3, including legitimate outlets that simply aren't on the list yet.
 
 ## Stack

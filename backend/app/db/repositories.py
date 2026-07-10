@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import asyncio
 from typing import Protocol
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import AnalysisRecord
+from app.db.models import AnalysisRecord, User
 from app.schemas.result import AnalysisResult
 
 
@@ -65,3 +65,45 @@ class SqlAnalysisRepository:
         )
         self._session.add(record)
         await self._session.commit()
+
+
+class UserRepository(Protocol):
+    async def get_by_email(self, email: str) -> User | None: ...
+
+    async def create(self, *, email: str, password_hash: str) -> User: ...
+
+
+class InMemoryUserRepository:
+    """Test double - the app always uses SqlUserRepository; tests inject
+    this via app.dependency_overrides[get_user_repository] so the auth
+    endpoints run without Postgres."""
+
+    def __init__(self) -> None:
+        self._by_email: dict[str, User] = {}
+        self._lock = asyncio.Lock()
+
+    async def get_by_email(self, email: str) -> User | None:
+        async with self._lock:
+            return self._by_email.get(email)
+
+    async def create(self, *, email: str, password_hash: str) -> User:
+        async with self._lock:
+            user = User(id=uuid4(), email=email, password_hash=password_hash)
+            self._by_email[email] = user
+            return user
+
+
+class SqlUserRepository:
+    def __init__(self, session: AsyncSession) -> None:
+        self._session = session
+
+    async def get_by_email(self, email: str) -> User | None:
+        stmt = select(User).where(User.email == email)
+        return (await self._session.execute(stmt)).scalar_one_or_none()
+
+    async def create(self, *, email: str, password_hash: str) -> User:
+        user = User(email=email, password_hash=password_hash)
+        self._session.add(user)
+        await self._session.commit()
+        await self._session.refresh(user)
+        return user

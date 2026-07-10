@@ -41,6 +41,21 @@ class CorpusDocument(Base):
     )
 
 
+class User(Base):
+    """Registered account. Email is stored lowercased; uniqueness is
+    enforced by the DB constraint, which the signup route relies on to
+    close the check-then-create race."""
+
+    __tablename__ = "users"
+
+    id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    password_hash: Mapped[str] = mapped_column(String(255))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+
+
 class AnalysisRecord(Base):
     """Cached AnalysisResult, keyed by cache_key = sha256(normalized_text +
     model_id + prompt_version) so identical input never triggers a second

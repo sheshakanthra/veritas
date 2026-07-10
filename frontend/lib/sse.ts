@@ -26,7 +26,9 @@ export function subscribeToAnalysis(
   analysisId: string,
   handlers: AnalysisStreamHandlers
 ): () => void {
-  const source = new EventSource(`${API_BASE_URL}/api/v1/analyze/${analysisId}/stream`);
+  const source = new EventSource(`${API_BASE_URL}/api/v1/analyze/${analysisId}/stream`, {
+    withCredentials: true,
+  });
 
   source.addEventListener("node", (event) => {
     const parsed = safeParseEventData(event.data);
