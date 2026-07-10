@@ -40,12 +40,12 @@ export function UserMenu() {
   }
 
   return (
-    <div className="fixed top-6 right-6 z-10 flex items-center gap-3">
-      <span className="text-mute font-mono text-xs">{user.email}</span>
+    <div className="flex items-center gap-3">
+      <span className="text-mute hidden font-mono text-xs sm:inline">{user.email}</span>
       <button
         type="button"
         onClick={handleLogout}
-        className="border-line text-mute hover:border-signal hover:text-text rounded-data duration-hover border px-2.5 py-1 font-mono text-xs transition-colors"
+        className="border-line text-mute hover:border-line-strong hover:text-text rounded-data border px-2.5 py-1.5 font-mono text-xs transition-colors duration-[var(--v-duration-hover)]"
       >
         Logout
       </button>

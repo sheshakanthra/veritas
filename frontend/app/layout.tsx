@@ -3,6 +3,8 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { cookies } from "next/headers";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
+import { TopBar } from "@/components/veritas/TopBar";
+import { CommandPalette } from "@/components/veritas/CommandPalette";
 import { readThemeCookie, themeInitScript } from "@/lib/theme";
 import "./globals.css";
 
@@ -43,7 +45,9 @@ export default async function RootLayout({
       </head>
       <body className="min-h-full flex flex-col antialiased">
         <TooltipProvider delay={150}>
+          <TopBar />
           {children}
+          <CommandPalette />
           <Toaster />
         </TooltipProvider>
       </body>

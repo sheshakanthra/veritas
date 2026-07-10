@@ -1,71 +1,87 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, CornerDownLeft, FileText, Link2, Loader2, Search } from "lucide-react";
 import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { submitAnalysis, ApiError } from "@/lib/api";
+import { Kbd } from "@/components/veritas/primitives";
 import { cn } from "@/lib/utils";
 
-const EXAMPLE_CLAIM =
-  "The new transit line cut average downtown commute times by 30% in its first year.";
-const TYPE_SPEED_MS = 45;
-const HERO_ANIMATION_SESSION_KEY = "veritas-hero-typed";
-const FULL_PLACEHOLDER = "Paste a claim, a headline, or a link.";
+const ROTATING_PLACEHOLDERS = [
+  "The new transit line cut average downtown commute times by 30% in its first year.",
+  "Renewable energy was the cheapest source of new electricity in 2024.",
+  "Paste a news headline to trace it back to its primary sources.",
+  "Drop a link — an article, a study, a press release.",
+  "A single volcano emits more CO₂ than all of human activity.",
+];
 
-const noopSubscribe = () => () => {};
-const getServerAlreadyPlayed = () => false;
+const BASE_PLACEHOLDER = "Paste a claim, a headline, or a link…";
+const ROTATE_MS = 3600;
 
-/** sessionStorage never fires same-tab change events, so there's nothing
- * to subscribe to - this only exists to read the flag safely across the
- * server/client render boundary without a hydration mismatch (mirrors
- * the matchMedia pattern in Spine.tsx's useIsMobile). */
-function useAlreadyPlayedHeroAnimation(): boolean {
-  const getSnapshot = useCallback(
-    () => window.sessionStorage.getItem(HERO_ANIMATION_SESSION_KEY) === "1",
-    []
-  );
-  return useSyncExternalStore(noopSubscribe, getSnapshot, getServerAlreadyPlayed);
+const EXAMPLE_CHIPS: { label: string; icon: typeof FileText; text: string }[] = [
+  {
+    label: "Statistical claim",
+    icon: FileText,
+    text: "The new transit line cut average downtown commute times by 30% in its first year.",
+  },
+  {
+    label: "Viral headline",
+    icon: Search,
+    text: "Study finds coffee drinkers live ten years longer than everyone else.",
+  },
+  {
+    label: "Article URL",
+    icon: Link2,
+    text: "https://example.com/press/quarterly-economic-growth-report",
+  },
+];
+
+function looksLikeUrl(text: string): boolean {
+  return /^https?:\/\/\S+$/i.test(text.trim());
 }
 
-/**
- * The hero IS the input. The placeholder types itself out once per
- * session (sessionStorage, not localStorage - this is throwaway UI
- * chrome state, not persisted analysis data) and never repeats, so
- * re-visiting the page mid-session doesn't replay the same trick twice.
- */
-export function ClaimInput() {
+export function ClaimInput({ initialText }: { initialText?: string }) {
   const router = useRouter();
-  const prefersReducedMotion = usePrefersReducedMotion();
-  const alreadyPlayed = useAlreadyPlayedHeroAnimation();
-  const shouldAnimate = !alreadyPlayed && !prefersReducedMotion;
-
-  const [text, setText] = useState("");
-  const [typedPlaceholder, setTypedPlaceholder] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const reduce = usePrefersReducedMotion();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const placeholder = shouldAnimate ? typedPlaceholder : FULL_PLACEHOLDER;
+  const [text, setText] = useState(initialText ?? "");
+  const [focused, setFocused] = useState(false);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
+  const isEmpty = text.trim().length === 0;
+  const showRotating = isEmpty && !focused && !reduce;
+  const isUrl = looksLikeUrl(text);
+
+  // Rotate the placeholder only while the field is idle and empty.
   useEffect(() => {
-    if (!shouldAnimate) return;
-    let i = 0;
-    const interval = setInterval(() => {
-      i += 1;
-      setTypedPlaceholder(FULL_PLACEHOLDER.slice(0, i));
-      if (i >= FULL_PLACEHOLDER.length) {
-        clearInterval(interval);
-        window.sessionStorage.setItem(HERO_ANIMATION_SESSION_KEY, "1");
-      }
-    }, TYPE_SPEED_MS);
-    return () => clearInterval(interval);
-  }, [shouldAnimate]);
+    if (!showRotating) return;
+    const id = setInterval(
+      () => setPlaceholderIndex((i) => (i + 1) % ROTATING_PLACEHOLDERS.length),
+      ROTATE_MS
+    );
+    return () => clearInterval(id);
+  }, [showRotating]);
 
-  async function handleSubmit(submittedText: string) {
-    const trimmed = submittedText.trim();
+  // Focus the search from anywhere with the "/" key.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const tag = document.activeElement?.tagName;
+      if (e.key === "/" && tag !== "TEXTAREA" && tag !== "INPUT") {
+        e.preventDefault();
+        textareaRef.current?.focus();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  async function handleSubmit(submitted: string) {
+    const trimmed = submitted.trim();
     if (trimmed.length === 0 || isSubmitting) return;
     setIsSubmitting(true);
     setError(null);
@@ -75,7 +91,6 @@ export function ClaimInput() {
     } catch (err) {
       setIsSubmitting(false);
       if (err instanceof ApiError && err.status === 401) {
-        // Expired token that slipped past the middleware's presence check.
         router.push("/login");
         return;
       }
@@ -87,67 +102,157 @@ export function ClaimInput() {
     }
   }
 
+  function applyExample(value: string) {
+    setText(value);
+    textareaRef.current?.focus();
+  }
+
   return (
-    <div className="flex w-full flex-col gap-4">
-      <motion.div
-        initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-        className="flex flex-col gap-3"
+    <div className="flex w-full flex-col gap-5">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit(text);
+        }}
       >
-        <Textarea
-          ref={textareaRef}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-              e.preventDefault();
-              handleSubmit(text);
-            }
+        <motion.div
+          animate={{
+            borderColor: focused ? "var(--v-signal)" : "var(--v-line)",
+            boxShadow: focused
+              ? "0 0 0 4px color-mix(in srgb, var(--v-signal) 14%, transparent), var(--v-shadow-lg)"
+              : "0 0 0 0px transparent, var(--v-shadow-md)",
           }}
-          placeholder={placeholder}
-          rows={4}
-          autoFocus
-          className={cn(
-            "rounded-overlay border-line bg-panel text-text placeholder:text-mute",
-            "font-mono text-lg leading-relaxed resize-none"
-          )}
-          aria-label="Claim, headline, or article URL"
-        />
+          transition={{ duration: reduce ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="rounded-panel bg-panel border"
+        >
+          <div className="flex items-start gap-3 px-5 pt-5">
+            <Search
+              className={cn(
+                "mt-1 size-5 shrink-0 transition-colors",
+                focused ? "text-signal" : "text-mute"
+              )}
+              aria-hidden
+            />
+            <div className="relative flex-1">
+              <textarea
+                ref={textareaRef}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(text);
+                  }
+                }}
+                rows={2}
+                autoFocus
+                aria-label="Claim, headline, or article URL"
+                placeholder={showRotating ? "" : BASE_PLACEHOLDER}
+                className={cn(
+                  "text-text placeholder:text-mute w-full resize-none bg-transparent",
+                  "font-sans text-lg leading-relaxed outline-none"
+                )}
+              />
+              {/* rotating placeholder overlay - only while idle + empty */}
+              {showRotating && (
+                <div className="pointer-events-none absolute inset-0" aria-hidden>
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={placeholderIndex}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                      className="text-mute font-sans text-lg leading-relaxed"
+                    >
+                      {ROTATING_PLACEHOLDERS[placeholderIndex]}
+                    </motion.p>
+                  </AnimatePresence>
+                </div>
+              )}
+            </div>
+          </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <button
-            type="button"
-            onClick={() => setText(EXAMPLE_CLAIM)}
-            title={EXAMPLE_CLAIM}
-            className={cn(
-              "border-line text-mute hover:border-signal hover:text-text inline-flex max-w-[22rem]",
-              "items-center gap-1.5 rounded-data border bg-panel-raised px-2.5 py-1",
-              "font-mono text-xs transition-colors duration-hover"
-            )}
-          >
-            <span aria-hidden className="text-signal shrink-0">
-              ✦
-            </span>
-            <span className="truncate">{EXAMPLE_CLAIM}</span>
-          </button>
+          <div className="flex flex-wrap items-center justify-between gap-3 px-5 pb-4 pt-3">
+            <div className="flex items-center gap-2">
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-data border px-2 py-1 font-mono text-xs",
+                  isUrl ? "border-signal/40 text-signal" : "border-line text-mute"
+                )}
+              >
+                {isUrl ? <Link2 className="size-3" /> : <FileText className="size-3" />}
+                {isUrl ? "Link" : "Claim"}
+              </span>
+              {!isEmpty && (
+                <span className="text-mute font-mono text-xs tabular-nums">
+                  {text.trim().length} chars
+                </span>
+              )}
+            </div>
 
-          <Button
-            type="button"
-            onClick={() => handleSubmit(text)}
-            disabled={text.trim().length === 0 || isSubmitting}
-            className="rounded-data bg-signal text-void hover:bg-signal/85 font-mono uppercase tracking-wide"
-          >
-            {isSubmitting ? "Submitting…" : "Analyze"}
-          </Button>
-        </div>
-      </motion.div>
+            <div className="flex items-center gap-3">
+              <span className="text-mute hidden items-center gap-1.5 font-mono text-xs sm:inline-flex">
+                <Kbd>
+                  <CornerDownLeft className="size-3" />
+                </Kbd>
+                to analyze
+              </span>
+              <button
+                type="submit"
+                disabled={isEmpty || isSubmitting}
+                className={cn(
+                  "group inline-flex items-center gap-2 rounded-data px-4 py-2 font-mono text-sm font-medium tracking-wide uppercase",
+                  "bg-signal text-void transition-all duration-[var(--v-duration-hover)]",
+                  "hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+                )}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    Analyzing
+                  </>
+                ) : (
+                  <>
+                    Analyze
+                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </form>
 
       {error && (
         <p role="alert" className="text-refutes font-mono text-sm">
           {error}
         </p>
       )}
+
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-mute mr-1 font-mono text-xs tracking-wide uppercase">Try</span>
+        {EXAMPLE_CHIPS.map((chip) => {
+          const Icon = chip.icon;
+          return (
+            <button
+              key={chip.label}
+              type="button"
+              onClick={() => applyExample(chip.text)}
+              className={cn(
+                "group inline-flex items-center gap-1.5 rounded-data border px-2.5 py-1.5 font-mono text-xs",
+                "border-line text-text-2 hover:border-line-strong hover:bg-panel-raised hover:text-text",
+                "transition-colors duration-[var(--v-duration-hover)]"
+              )}
+            >
+              <Icon className="text-mute group-hover:text-signal size-3 transition-colors" />
+              {chip.label}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
