@@ -1,0 +1,43 @@
+# Static domain allowlist used by the `retrieve` node to tag each evidence
+# document with a source_tier. Weighting logic lives in adjudicate.py;
+# this file only maps domain -> tier.
+#
+# tier 1: wire services / primary sources (govt data, court filings, direct
+#         wire copy) - highest trust weight (1.0)
+# tier 2: established mainstream outlets with editorial standards (0.6)
+# tier 3: everything else - unknown/low-signal, or not listed here (0.3)
+#
+# Unlisted domains default to tier 3 in code (retrieval/dedup.py), so this
+# file only needs to enumerate tier 1 and tier 2 exceptions.
+
+tier_1:
+  - reuters.com
+  - apnews.com
+  - afp.com
+  - bloomberg.com
+  - data.gov
+  - census.gov
+  - cdc.gov
+  - who.int
+  - sec.gov
+  - courtlistener.com
+  - federalreserve.gov
+  - bls.gov
+  - noaa.gov
+
+tier_2:
+  - nytimes.com
+  - washingtonpost.com
+  - wsj.com
+  - bbc.com
+  - npr.org
+  - theguardian.com
+  - economist.com
+  - ft.com
+  - pbs.org
+  - politico.com
+  - axios.com
+  - propublica.org
+  - factcheck.org
+  - snopes.com
+  - politifact.com

@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: veritas-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-veritas}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-veritas_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-veritas}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - veritas_pg_data:/var/lib/postgresql/data
+      - ./backend/db/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-veritas} -d ${POSTGRES_DB:-veritas}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  veritas_pg_data:

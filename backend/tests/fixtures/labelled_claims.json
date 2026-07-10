@@ -1,0 +1,322 @@
+[
+  {
+    "id": "syn-001",
+    "claim": "The national unemployment rate fell to 3.9% in March, according to Bureau of Labor Statistics data.",
+    "label": "SUPPORTED",
+    "predicted_confidence": 0.86,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-002",
+    "claim": "A newly published peer-reviewed study found no link between the additive and the reported health effects.",
+    "label": "REFUTED",
+    "predicted_confidence": 0.81,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-003",
+    "claim": "The mayor said the bridge closure would last only two weeks.",
+    "label": "MISLEADING_CONTEXT",
+    "predicted_confidence": 0.55,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-004",
+    "claim": "A small blog post claims a local startup raised $500 million in seed funding.",
+    "label": "UNVERIFIABLE",
+    "predicted_confidence": 0.18,
+    "correct": false,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-005",
+    "claim": "Two wire services independently confirmed the ceasefire agreement was signed Monday.",
+    "label": "SUPPORTED",
+    "predicted_confidence": 0.91,
+    "correct": false,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-006",
+    "claim": "Court records show the company never filed for the permit it claimed to hold.",
+    "label": "REFUTED",
+    "predicted_confidence": 0.88,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-007",
+    "claim": "The senator's office and an independent fact-checker gave conflicting accounts of the vote tally.",
+    "label": "MISLEADING_CONTEXT",
+    "predicted_confidence": 0.49,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-008",
+    "claim": "An anonymous forum post says a celebrity secretly funded the campaign.",
+    "label": "UNVERIFIABLE",
+    "predicted_confidence": 0.11,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-009",
+    "claim": "Census data confirms the county's population grew by 4.2% over the last decade.",
+    "label": "SUPPORTED",
+    "predicted_confidence": 0.89,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-010",
+    "claim": "The company's press release overstated its market share, contradicting its own SEC filing.",
+    "label": "REFUTED",
+    "predicted_confidence": 0.79,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-011",
+    "claim": "A viral post claims the vaccine batch was recalled nationwide, but only one state issued a recall.",
+    "label": "MISLEADING_CONTEXT",
+    "predicted_confidence": 0.58,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-012",
+    "claim": "A single low-traffic blog states the bridge was built in 1932.",
+    "label": "UNVERIFIABLE",
+    "predicted_confidence": 0.22,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-013",
+    "claim": "The World Health Organization and CDC both confirmed the outbreak's origin location.",
+    "label": "SUPPORTED",
+    "predicted_confidence": 0.93,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-014",
+    "claim": "Reuters reported the executive's resignation; the company denies any resignation occurred.",
+    "label": "MISLEADING_CONTEXT",
+    "predicted_confidence": 0.52,
+    "correct": false,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-015",
+    "claim": "The claim that the factory closed in 2019 is contradicted by tax filings showing continuous operation.",
+    "label": "REFUTED",
+    "predicted_confidence": 0.84,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-016",
+    "claim": "A rumor claims the new tax law doubles the deduction; the treasury department has not commented.",
+    "label": "UNVERIFIABLE",
+    "predicted_confidence": 0.15,
+    "correct": false,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-017",
+    "claim": "AP and the local paper both independently verified the storm's wind speed at landfall.",
+    "label": "SUPPORTED",
+    "predicted_confidence": 0.9,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-018",
+    "claim": "The politician's claimed voting record does not match the official legislative archive.",
+    "label": "REFUTED",
+    "predicted_confidence": 0.86,
+    "correct": false,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-019",
+    "claim": "Officials described the incident as 'contained' while an internal memo called it 'ongoing'.",
+    "label": "MISLEADING_CONTEXT",
+    "predicted_confidence": 0.53,
+    "correct": false,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-020",
+    "claim": "A single tier-3 aggregator site claims the merger talks collapsed.",
+    "label": "UNVERIFIABLE",
+    "predicted_confidence": 0.2,
+    "correct": false,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-021",
+    "claim": "NOAA data confirms this was the hottest recorded July in the region's history.",
+    "label": "SUPPORTED",
+    "predicted_confidence": 0.88,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-022",
+    "claim": "The claimed quote was fabricated - the original transcript contains no such statement.",
+    "label": "REFUTED",
+    "predicted_confidence": 0.82,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-023",
+    "claim": "One outlet says the plant is closing permanently; another says it's a temporary shutdown.",
+    "label": "MISLEADING_CONTEXT",
+    "predicted_confidence": 0.5,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-024",
+    "claim": "An unverified social media account claims the CEO resigned overnight.",
+    "label": "UNVERIFIABLE",
+    "predicted_confidence": 0.14,
+    "correct": false,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-025",
+    "claim": "SEC filings and two business wire reports agree on the acquisition price.",
+    "label": "SUPPORTED",
+    "predicted_confidence": 0.87,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-026",
+    "claim": "The claim of a 50% price increase is refuted by the retailer's published price history.",
+    "label": "REFUTED",
+    "predicted_confidence": 0.85,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-027",
+    "claim": "Coverage of the summit's outcome varied significantly between two tier-1 wire services.",
+    "label": "MISLEADING_CONTEXT",
+    "predicted_confidence": 0.47,
+    "correct": false,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-028",
+    "claim": "A claim about a local election result appears only on one low-signal forum thread.",
+    "label": "UNVERIFIABLE",
+    "predicted_confidence": 0.19,
+    "correct": false,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-029",
+    "claim": "Federal Reserve minutes confirm the rate decision matched the announced figure.",
+    "label": "SUPPORTED",
+    "predicted_confidence": 0.92,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-030",
+    "claim": "The claimed injury count was refuted by the hospital's official incident report.",
+    "label": "REFUTED",
+    "predicted_confidence": 0.78,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-031",
+    "claim": "A think tank's opinion piece is being circulated as if it were a peer-reviewed study.",
+    "label": "MISLEADING_CONTEXT",
+    "predicted_confidence": 0.56,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-032",
+    "claim": "A screenshot with no visible source claims a policy change takes effect next week.",
+    "label": "UNVERIFIABLE",
+    "predicted_confidence": 0.13,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-033",
+    "claim": "Court filings and a wire report agree the settlement amount was $12 million.",
+    "label": "SUPPORTED",
+    "predicted_confidence": 0.9,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-034",
+    "claim": "The claimed causal link between the policy and the crime drop is contradicted by the agency's own data.",
+    "label": "REFUTED",
+    "predicted_confidence": 0.76,
+    "correct": false,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-035",
+    "claim": "The company's earnings call and its press release cite different revenue figures for the same quarter.",
+    "label": "MISLEADING_CONTEXT",
+    "predicted_confidence": 0.51,
+    "correct": false,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-036",
+    "claim": "A claim about a scientific breakthrough appears only in a press release with no independent coverage.",
+    "label": "UNVERIFIABLE",
+    "predicted_confidence": 0.24,
+    "correct": false,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-037",
+    "claim": "BLS and two independent economists confirm the inflation figure for the quarter.",
+    "label": "SUPPORTED",
+    "predicted_confidence": 0.85,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-038",
+    "claim": "The claimed endorsement was refuted directly by the organization in a public statement.",
+    "label": "REFUTED",
+    "predicted_confidence": 0.83,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-039",
+    "claim": "Two credible outlets dispute whether the treaty was formally ratified or only signed.",
+    "label": "MISLEADING_CONTEXT",
+    "predicted_confidence": 0.48,
+    "correct": true,
+    "source": "SYNTHETIC"
+  },
+  {
+    "id": "syn-040",
+    "claim": "A claim about a product recall exists only on a single unverified retail forum.",
+    "label": "UNVERIFIABLE",
+    "predicted_confidence": 0.16,
+    "correct": false,
+    "source": "SYNTHETIC"
+  }
+]

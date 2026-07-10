@@ -1,0 +1,149 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is([data-theme="dark"] *));
+
+/* ============================================================
+   VERITAS design tokens - the only place raw color/motion values
+   are allowed to live. Every component reads through these, or
+   through the Tailwind @theme mapping below. No raw hex anywhere
+   else in the app.
+   ============================================================ */
+
+:root {
+  /* Terminal (dark) - the default theme */
+  --v-void: #07090a;
+  --v-panel: #0e1213;
+  --v-panel-raised: #141a1b; /* +6% lightness step for stacked surfaces */
+  --v-line: #1c2224;
+  --v-text: #e6edeb;
+  --v-mute: #7c8b88;
+  --v-signal: #00ffcc;
+
+  --v-supports: #00ffcc;
+  --v-refutes: #ff5470;
+  --v-neutral: #6b7a78;
+  --v-caution: #ffb020;
+
+  --v-popover-shadow: 0 12px 40px -8px rgb(0 0 0 / 0.55);
+
+  /* Type scale - modular ratio 1.25 */
+  --v-text-xs: 0.75rem; /* 12 */
+  --v-text-sm: 0.875rem; /* 14 */
+  --v-text-base: 1rem; /* 16 */
+  --v-text-lg: 1.25rem; /* 20 */
+  --v-text-xl: 1.5625rem; /* 25 */
+  --v-text-2xl: 1.9375rem; /* 31 */
+  --v-text-3xl: 2.4375rem; /* 39 */
+  --v-text-4xl: 3.0625rem; /* 49 */
+
+  /* Radius scale - the whole scale, two values */
+  --v-radius-data: 4px;
+  --v-radius-overlay: 10px;
+
+  /* Motion */
+  --v-ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --v-ease-exit: ease-out;
+  --v-duration-hover: 120ms;
+  --v-duration-enter: 220ms;
+  --v-duration-tie: 380ms;
+}
+
+[data-theme="light"] {
+  /* Lab - paper/ink, same hue family, legal contrast */
+  --v-void: #faf9f6;
+  --v-panel: #ffffff;
+  --v-panel-raised: #f4f3ef;
+  --v-line: #e2e0da;
+  --v-text: #0b0e0f;
+  --v-mute: #6a6e6b;
+  --v-signal: #00806b; /* #00FFCC fails contrast on paper - same hue, legal contrast */
+
+  --v-supports: #00806b;
+  --v-refutes: #c81e3f;
+  --v-neutral: #7a827f;
+  --v-caution: #a15c00;
+
+  --v-popover-shadow: 0 12px 32px -8px rgb(11 14 15 / 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --v-duration-hover: 0ms;
+    --v-duration-enter: 0ms;
+    --v-duration-tie: 0ms;
+  }
+}
+
+@theme inline {
+  --color-void: var(--v-void);
+  --color-panel: var(--v-panel);
+  --color-panel-raised: var(--v-panel-raised);
+  --color-line: var(--v-line);
+  --color-text: var(--v-text);
+  --color-mute: var(--v-mute);
+  --color-signal: var(--v-signal);
+
+  --color-supports: var(--v-supports);
+  --color-refutes: var(--v-refutes);
+  --color-neutral: var(--v-neutral);
+  --color-caution: var(--v-caution);
+
+  /* shadcn semantic tokens, remapped onto the VERITAS palette so every
+     restyled Radix primitive draws from the same source of truth */
+  --color-background: var(--v-void);
+  --color-foreground: var(--v-text);
+  --color-card: var(--v-panel);
+  --color-card-foreground: var(--v-text);
+  --color-popover: var(--v-panel-raised);
+  --color-popover-foreground: var(--v-text);
+  --color-primary: var(--v-signal);
+  --color-primary-foreground: var(--v-void);
+  --color-secondary: var(--v-panel-raised);
+  --color-secondary-foreground: var(--v-text);
+  --color-muted: var(--v-panel-raised);
+  --color-muted-foreground: var(--v-mute);
+  --color-accent: var(--v-panel-raised);
+  --color-accent-foreground: var(--v-text);
+  --color-destructive: var(--v-refutes);
+  --color-border: var(--v-line);
+  --color-input: var(--v-line);
+  --color-ring: var(--v-signal);
+
+  --font-mono: var(--font-jetbrains-mono);
+  --font-sans: var(--font-inter);
+
+  --text-xs: var(--v-text-xs);
+  --text-sm: var(--v-text-sm);
+  --text-base: var(--v-text-base);
+  --text-lg: var(--v-text-lg);
+  --text-xl: var(--v-text-xl);
+  --text-2xl: var(--v-text-2xl);
+  --text-3xl: var(--v-text-3xl);
+  --text-4xl: var(--v-text-4xl);
+
+  --radius-data: var(--v-radius-data);
+  --radius-overlay: var(--v-radius-overlay);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    @apply font-mono;
+    color-scheme: dark;
+  }
+  [data-theme="light"] html,
+  [data-theme="light"] {
+    color-scheme: light;
+  }
+  body {
+    @apply bg-background text-foreground font-mono text-base;
+    font-feature-settings: "tnum" 1;
+  }
+  :focus-visible {
+    outline: 2px solid var(--v-signal);
+    outline-offset: 2px;
+  }
+}
