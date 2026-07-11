@@ -1,0 +1,26 @@
+# Runtime dependencies for the FastAPI backend service (Vercel reads this
+# for the "fastapi" framework build). Mirrors the runtime deps in
+# pyproject.toml; dev-only tools (pytest, ruff, mypy) are intentionally
+# excluded. Regenerate from pyproject.toml [project].dependencies if that
+# list changes.
+fastapi>=0.115,<0.116
+uvicorn[standard]>=0.32,<0.33
+pydantic[email]>=2.9,<3.0
+pydantic-settings>=2.6,<3.0
+sse-starlette>=2.1,<3.0
+langgraph>=0.2.45,<0.3
+langchain-groq>=0.2.1,<0.3
+langchain-core>=0.3.15,<0.4
+sqlalchemy[asyncio]>=2.0.36,<3.0
+asyncpg>=0.30,<0.31
+alembic>=1.13,<2.0
+pgvector>=0.3.6,<0.4
+sentence-transformers>=3.2,<4.0
+trafilatura>=1.12,<2.0
+ddgs>=9.0,<10.0
+httpx>=0.27,<0.28
+tenacity>=9.0,<10.0
+pyyaml>=6.0,<7.0
+numpy>=1.26,<2.0
+pyjwt>=2.10,<3.0
+bcrypt>=4.2,<5.0
