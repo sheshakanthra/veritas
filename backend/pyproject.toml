@@ -2,7 +2,7 @@
 name = "veritas-backend"
 version = "0.1.0"
 description = "VERITAS - calibrated, evidence-traced misinformation detection"
-requires-python = ">=3.11,<3.12"
+requires-python =">=3.11,<3.13"
 readme = "../README.md"
 license = { text = "MIT" }
 
