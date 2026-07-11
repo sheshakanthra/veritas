@@ -19,7 +19,6 @@ dependencies = [
     "asyncpg>=0.30,<0.31",
     "alembic>=1.13,<2.0",
     "pgvector>=0.3.6,<0.4",
-    "sentence-transformers>=3.2,<4.0",
     "trafilatura>=1.12,<2.0",
     "ddgs>=9.0,<10.0",
     "httpx>=0.27,<0.28",
@@ -31,6 +30,14 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Real semantic embeddings. Kept OUT of the base install because
+# sentence-transformers pulls in PyTorch (~multi-GB), which blows past
+# Vercel's 500MB serverless bundle limit. Vercel installs only the base
+# deps (see backend/requirements.txt); MOCK_MODE=true never needs this.
+# Install locally for real embeddings: pip install -e ".[dev,ml]"
+ml = [
+    "sentence-transformers>=3.2,<4.0",
+]
 dev = [
     "pytest>=8.3,<9.0",
     "pytest-asyncio>=0.24,<0.25",

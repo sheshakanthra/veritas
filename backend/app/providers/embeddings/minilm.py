@@ -14,7 +14,20 @@ class MiniLMEmbeddingProvider:
     dim = DIM
 
     def __init__(self, model_name: str, device: str) -> None:
-        from sentence_transformers import SentenceTransformer
+        # Lazy + guarded: sentence-transformers is an optional "ml" extra kept
+        # out of the default (and Vercel) install to stay under the serverless
+        # bundle limit. This provider is only constructed when MOCK_MODE=false,
+        # so a missing dependency should be a loud, actionable error - never a
+        # silent failure discovered mid-request.
+        try:
+            from sentence_transformers import SentenceTransformer
+        except ModuleNotFoundError as exc:
+            raise RuntimeError(
+                "sentence-transformers is not installed. It is an optional 'ml' "
+                "dependency excluded from the default install to keep the serverless "
+                "bundle small. Install it with `pip install -e \".[ml]\"` (or "
+                "`.[dev,ml]`) for real embeddings, or run with MOCK_MODE=true."
+            ) from exc
 
         self._model = SentenceTransformer(model_name, device=device)
 
